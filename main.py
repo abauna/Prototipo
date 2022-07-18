@@ -8,96 +8,33 @@ import statistics
 import cv2
 import numpy as np
 import colorgram
+from PIL import Image
 import argparse
 import sys
 from PIL import Image, ImageDraw, ImageFont
-def media(matriz):
-  soma = 0
-  tamanho = 0
+import qrcode
 
-  for linha in matriz:
-    soma += sum(linha)
-    tamanho += len(linha)
-  return soma / tamanho
-def get_colors(fatia2):
-    hsv = cv2.cvtColor(fatia2, cv2.COLOR_BGR2HSV)
-    b1, g1, r1 = cv2.split(fatia2)
-    mb = media(b1)
-    mg = media(g1)
-    mr = media(r1)
-    if((mb>180)or (mr>180)or(mg>180)):
-        return "branco"
-    else:
-        return "marcado"
+#img=np.zeros((320,600),dtype=np.uint8)
+img=cv2.imread("FolhaRespostas.jpg")
+#img=imag[100:150,100:250]
+dado="nome do aluno"
+cv2.putText(img,dado,(250,1560),cv2.FONT_HERSHEY_DUPLEX,1,255)
 
+#img[225:100, 1525:1651] = (255, 0,0)
+#cv2.imshow("janela",img)
+cv2.imwrite("fonte_opencv.jpg",img)
+qr = qrcode.QRCode(version = 1,
+                   box_size = 5,
+                   border = 5)
+qr.add_data(dado)
+imag = qr.make_image(fill_color = 'black',
+                    back_color = 'white')
+imag.save('qr.jpg')
 
-
-def verificar(xa,ya):
-    fatia2 = imagem[xa:xa + 2000, ya+20:ya+800]
-    cv2.imshow("aaaa", fatia2)
-    print(xa,ya,"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print("letra A "+get_colors(fatia2))
-
-    fatia2 = imagem[xa:xa + 10, ya+60:ya+80]
-    #cv2.imshow("bb", fatia2)
-    print("letra B "+get_colors(fatia2))
-    fatia2 = imagem[xa:xa + 10, ya+80:ya+100]
-    #cv2.imshow("cc", fatia2)
-    print("letra C "+get_colors(fatia2))
-    fatia2 = imagem[xa:xa + 10, ya+100:ya+120]
-    #cv2.imshow("dd", fatia2)
-    print("letra D "+get_colors(fatia2))
-
-
-    pass
-def verifica_coluna(xa,ya):
-
-
-    # 10,105 cada questao
-    # +20,+0  intervalo entre cada questao
-    contador = 1
-    lista_de_questoes = []
-    lista_de_respostas = []
-    while (xa < 760):
-        print("questao ", contador, " ")
-        fatia2 = imagem[xa:xa + 10, ya:yf]
-        palavra = " " + str(xa) + str(xf) + " "
-        xa = xa + 20
-        lista_de_respostas.append(verificar(xa, ya))
-        lista_de_questoes.append(xa)
-        contador = contador + 1
-        print("questao ", contador, " ")
-        fatia2 = imagem[xa:xa + 10, ya:yf]
-        palavra = " " + str(xa) + str(xf) + " "
-        xa = xa + 19
-        lista_de_respostas.append(verificar(xa, ya))
-        lista_de_questoes.append(xa)
-        contador = contador + 1
-    print("questao ", contador, " ")
-    fatia2 = imagem[xa:xa + 10, ya:yf]
-    palavra = " " + str(xa) + str(xf) + " "
-    xa = xa + 20
-    lista_de_respostas.append(verificar(xa, ya))
-    lista_de_questoes.append(xa)
-    pass
-
-xa=339
-ya=40
-xf=350
-yf=160
-imagem = cv2.imread("img_4.png")
-fatia = imagem[xa:xf, ya:yf]
-fatia2 = imagem[xa:xa + 10, ya:yf]
-cv2.imshow("testet", imagem)
-cv2.imshow("t", fatia2)
-verifica_coluna(xa,ya)
-fatia = imagem[xa:xf, 165:280]
-cv2.imshow("teste", fatia)
-fatia = imagem[xa:xf, 290:400]
-cv2.imshow("test", fatia)
-fatia = imagem[xa:xf, 410:525]
-cv2.imshow("tes", fatia)
-fatia = imagem[359:359 + 10, 40:525]
-cv2.imshow("ts", fatia)
-# fatia2 = imagem[xa:xa + 10, ya+60:ya+80]
+img = Image.open(r"fonte_opencv.jpg")
+imag = Image.open(r"qr.jpg")
+img.paste(imag, (90,1525))
+#imag.show()
+img.show()
+img.save("final.jpg")
 cv2.waitKey(0)
